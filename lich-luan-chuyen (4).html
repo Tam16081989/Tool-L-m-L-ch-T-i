@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lịch Luân Chuyển GHN Cần Thơ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --orange:#FF8C00;
+    --orange-title:#FF7A1A;
+    --orange-light:#FFE0C2;
+    --red:#D32F2F;
+    --yellow:#FFD24A;
+    --header-grey:#D9D9D9;
+    --border:#000;
+    --bg:#F4F5F7;
+    --panel:#FFFFFF;
+    --accent:#1A73E8;
+    --text:#1A1A1A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:16px;
+  }
+  h1{
+    font-size:20px;
+    margin:0 0 4px;
+  }
+  .sub{
+    color:#666;
+    font-size:13px;
+    margin-bottom:16px;
+  }
+  .panel{
+    background:var(--panel);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  .panel h2{
+    font-size:15px;
+    margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .step-num{
+    background:var(--accent);
+    color:#fff;
+    width:22px;height:22px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:bold;
+    flex-shrink:0;
+  }
+  textarea{
+    width:100%;
+    min-height:140px;
+    font-family:monospace;
+    font-size:12px;
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    resize:vertical;
+  }
+  .row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  select,input[type=date],input[type=text]{
+    padding:8px 10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:14px;
+  }
+  button{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button.secondary{
+    background:#5F6368;
+  }
+  button.green{
+    background:#1E8E3E;
+  }
+  button:hover{opacity:.9;}
+  .hint{
+    font-size:12px;
+    color:#888;
+    margin-top:6px;
+  }
+  /* ===== LICH (capture target) ===== */
+  #lichWrap{
+    overflow-x:auto;
+  }
+  #lichCard{
+    border:3px solid var(--border);
+    width:1280px;
+    background:#fff;
+    font-family:'Times New Roman', Times, serif;
+  }
+  #lichCard .title{
+    text-align:center;
+    font-size:36px;
+    font-weight:bold;
+    padding:18px 8px;
+    border-bottom:3px solid var(--border);
+    text-transform:uppercase;
+    background:var(--orange-title);
+    color:#fff;
+  }
+  table.lich{
+    width:100%;
+    border-collapse:collapse;
+    font-size:21px;
+  }
+  table.lich th, table.lich td{
+    border:1.5px solid var(--border);
+    padding:9px 14px;
+  }
+  table.lich th{
+    background:var(--header-grey);
+    font-weight:bold;
+    text-align:center;
+    font-size:22px;
+  }
+  table.lich td.tuyen{ font-weight:bold; }
+  table.lich td.tt{ text-align:center; font-weight:bold; }
+  table.lich td.cutoff{ text-align:center; }
+  table.lich td.bks{ text-align:center; font-weight:bold; }
+  table.lich td.tx{ text-align:right; }
+  table.lich tr.noibo td{ background:var(--orange-light) !important; }
+  table.lich td.tt.red, table.lich td.bks.red{ color:var(--red); }
+  /* edit mode */
+  td[contenteditable="true"]{ outline:none; }
+  td[contenteditable="true"]:focus{ background:#FFF9E6; }
+  .empty-state{
+    padding:30px;
+    text-align:center;
+    color:#999;
+    font-style:italic;
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    padding:2px 8px;
+    border-radius:10px;
+    background:#eee;
+    color:#555;
+    margin-left:6px;
+  }
+  .badge.ok{background:#E6F4EA;color:#1E8E3E;}
+  .badge.warn{background:#FCE8E6;color:#D93025;}
+
+  table.noibo-form{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+  }
+  table.noibo-form th{
+    text-align:left;
+    padding:6px 8px;
+    border-bottom:2px solid #ddd;
+    font-size:12px;
+    color:#666;
+    text-transform:uppercase;
+  }
+  table.noibo-form td{
+    padding:5px 8px;
+    border-bottom:1px solid #eee;
+  }
+  table.noibo-form td.tuyen-label{
+    font-weight:600;
+    font-family:monospace;
+    font-size:13px;
+    color:#444;
+  }
+  table.noibo-form input[type=text], table.noibo-form select{
+    width:100%;
+    padding:6px 8px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+
+<h1>📋 Lịch Luân Chuyển GHN Cần Thơ</h1>
+<div class="sub">Dán dữ liệu NCC + dữ liệu nội bộ → chọn ca/ngày → gộp & sắp xếp tự động → xuất ảnh gửi Telegram</div>
+
+<!-- STEP 1: Input -->
+<div class="panel">
+  <h2><span class="step-num">1</span> Dán dữ liệu từ Google Sheet (NCC)</h2>
+  <div class="row">
+    <label>Ca chạy:</label>
+    <select id="caChon" onchange="buildNoiBoForm()">
+      <option value="S">Ca Sáng</option>
+      <option value="T">Ca Trưa</option>
+      <option value="C">Ca Chiều</option>
+    </select>
+    <label>Ngày:</label>
+    <input type="date" id="ngayChon">
+  </div>
+  <textarea id="dataInput" placeholder="Dán nguyên vùng dữ liệu copy từ Google Sheet vào đây (gồm cột STT, NGÀY, BIỂN SỐ XE, TẢI TRỌNG, TÀI XẾ, SỐ ĐIỆN THOẠI, MÃ TUYẾN...)"></textarea>
+  <div class="hint">Tool tự nhận diện cột theo header hoặc theo vị trí cột. Không cần xóa STT/NGÀY, tool tự lọc.</div>
+  <div class="actions">
+    <button onclick="generateLich()">⚡ Tạo lịch</button>
+    <button class="secondary" onclick="clearAll()">🗑 Xóa hết</button>
+  </div>
+</div>
+
+<!-- STEP 1b: Internal driver schedule -->
+<div class="panel">
+  <h2><span class="step-num">1b</span> Điền BKS + chọn Tài xế cho các tuyến nội bộ</h2>
+  <div class="hint">Mỗi dòng = 1 tuyến cố định. Gõ/dán Biển số xe, chọn Tài xế từ danh sách. Để trống dòng nào nếu hôm nay không chạy.</div>
+  <div class="hint">💾 Tool tự nhớ thông tin đã điền cho lần sau (lưu trên máy/trình duyệt này). Chỉ cần sửa những dòng có thay đổi.</div>
+  <table class="noibo-form" id="noiboForm">
+    <thead>
+      <tr><th style="width:25%">Mã tuyến</th><th style="width:30%">Biển số xe</th><th style="width:45%">Tài xế</th></tr>
+    </thead>
+    <tbody id="noiboFormBody"></tbody>
+  </table>
+  <div class="actions">
+    <button onclick="generateLich()">⚡ Tạo lịch</button>
+    <button class="secondary" onclick="resetNoiBoForm()">↺ Xóa thông tin đã nhớ (ca này)</button>
+  </div>
+</div>
+
+<!-- STEP 2: Lich preview -->
+<div class="panel">
+  <h2><span class="step-num">2</span> Lịch luân chuyển <span id="statusBadge"></span></h2>
+  <div class="hint">📝 Có thể click trực tiếp vào ô CUTOFF / Trọng tải / Tên tài xế để sửa nếu cần, trước khi xuất ảnh.</div>
+  <div id="lichWrap">
+    <div id="lichCard">
+      <div class="title" id="lichTitle">CHƯA CÓ DỮ LIỆU</div>
+      <div class="empty-state" id="emptyState">Dán dữ liệu ở bước 1 rồi bấm "Tạo lịch"</div>
+      <table class="lich" id="lichTable" style="display:none">
+        <thead>
+          <tr>
+            <th style="width:5%">TT</th>
+            <th style="width:13%">TUYẾN</th>
+            <th style="width:12%">TRỌNG TẢI</th>
+            <th style="width:14%">CUTOFF</th>
+            <th style="width:14%">BIỂN SỐ XE</th>
+            <th style="width:42%">THÔNG TIN TÀI XẾ</th>
+          </tr>
+        </thead>
+        <tbody id="lichBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="green" onclick="exportImage()">📸 Xuất ảnh PNG</button>
+  </div>
+</div>
+
+<script>
+// ====== 21 tài xế nội bộ (tô vàng) ======
+const NOI_BO = [
+  "Phạm Nguyễn Minh Mạnh","Huỳnh Văn Dư","Nguyễn Dương Hoàng Sơn","Hà Thanh Sơn",
+  "Dương Văn Đức","Phạm Lộc Thọ","Trương Hồng Kha","Châu Ngọc Sang",
+  "Nguyễn Thanh Trường Hận","Huỳnh Văn Bằng","Nguyễn Ngọc Nguyên",
+  "Lê Hữu Khoa","Trần Hoàng Anh","Lê Hoàng Kha","Nguyễn Thanh Cường",
+  "Nhan Bảo Linh","Nguyễn Hoàng Ân","Lê Duy Ngọc","Đỗ Hoàng Huy",
+  "Nguyễn Thanh Nhân","Nguyễn Huy Hoàng"
+];
+
+// ====== Danh sách tuyến nội bộ cố định theo từng ca (thứ tự dán = thứ tự dòng) ======
+const TUYEN_NOI_BO = {
+  S: ["CanTho_S1_07","CanTho_S1_09","CanTho_S1_11","CanTho_S1_13","CanTho_S1_14",
+      "CanTho_S1_17","CanTho_S1_21","CanTho_S1_22","CanTho_S1_24","CanTho_S1_26","CanTho_S1_56"],
+  T: ["CanTho_T1_07","CanTho_T1_09","CanTho_T1_11","CanTho_T1_12","CanTho_T1_13",
+      "CanTho_T1_15","CanTho_T1_22","CanTho_T1_23","CanTho_T1_24","CanTho_T1_33","CanTho_T1_35"],
+  C: ["CanTho_C1_07","CanTho_C1_09","CanTho_C1_10","CanTho_C1_14","CanTho_C1_19"]
+};
+
+// ====== Bảng cutoff cố định theo mã tuyến (chuẩn hóa: bỏ số sau prefix, ví dụ T1 -> T) ======
+// format: { "PREFIX_NUM": [cutoffDen, cutoffRoi] }
+const CUTOFF = {
+  // ===== CA SÁNG =====
+  "CAMAU_S_8":["00:40","01:00"],
+  "KIENGIANG_S_4":["00:40","01:00"],
+  "CANTHO_GXT_S_1":["03:00","03:30"],
+  "CANTHO_GXT_S_2":["03:00","03:30"],
+  "CANTHO_GXT_S_3":["03:30","04:00"],
+  "CANTHO_GXT_S_4":["04:00","04:30"],
+  "CANTHO_GXT_S_5":["04:30","05:00"],
+  "CANTHO_S_1":["03:15","03:45"],
+  "CANTHO_S_2":["03:15","03:45"],
+  "CANTHO_S_3":["03:25","03:45"],
+  "CANTHO_S_4":["03:25","03:45"],
+  "CANTHO_S_5":["03:25","03:45"],
+  "CANTHO_S_6":["03:25","03:45"],
+  "CANTHO_S_7":["03:25","10:10"],
+  "CANTHO_S_8":["03:25","03:45"],
+  "CANTHO_S_9":["03:25","10:30"],
+  "CANTHO_S_10":["03:25","03:45"],
+  "CANTHO_S_11":["03:45","10:30"],
+  "CANTHO_S_12":["03:45","04:05"],
+  "CANTHO_S_13":["03:45","10:00"],
+  "CANTHO_S_14":["03:45","10:20"],
+  "CANTHO_S_15":["03:45","04:05"],
+  "CANTHO_S_16":["03:45","04:05"],
+  "CANTHO_S_17":["03:45","09:40"],
+  "CANTHO_S_18":["03:45","04:05"],
+  "CANTHO_S_19":["03:45","04:05"],
+  "CANTHO_S_20":["03:45","04:05"],
+  "CANTHO_S_21":["04:05","09:40"],
+  "CANTHO_S_22":["04:05","09:40"],
+  "CANTHO_S_23":["04:05","04:25"],
+  "CANTHO_S_24":["04:05","09:40"],
+  "CANTHO_S_25":["04:05","04:25"],
+  "CANTHO_S_26":["04:05","09:00"],
+  "CANTHO_S_27":["04:05","04:25"],
+  "CANTHO_S_28":["04:05","04:25"],
+  "CANTHO_S_29":["04:05","04:25"],
+  "CANTHO_S_30":["04:05","04:25"],
+  "CANTHO_S_31":["04:05","04:25"],
+  "CANTHO_S_32":["04:25","04:45"],
+  "CANTHO_S_33":["04:25","04:45"],
+  "CANTHO_S_34":["04:25","04:45"],
+  "CANTHO_S_35":["04:25","04:45"],
+  "CANTHO_S_36":["04:25","04:45"],
+  "CANTHO_S_37":["04:25","04:45"],
+  "CANTHO_S_38":["04:25","04:45"],
+  "CANTHO_S_39":["04:25","04:45"],
+  "CANTHO_S_40":["04:25","04:45"],
+  "CANTHO_S_41":["04:45","05:05"],
+  "CANTHO_S_42":["04:45","05:05"],
+  "CANTHO_S_43":["04:45","05:05"],
+  "CANTHO_S_44":["04:45","05:05"],
+  "CANTHO_S_45":["04:45","05:05"],
+  "CANTHO_S_46":["04:45","05:05"],
+  "CANTHO_S_47":["04:45","05:05"],
+  "CANTHO_S_48":["04:45","05:05"],
+  "CANTHO_S_49":["04:45","05:05"],
+  "CANTHO_S_50":["04:45","05:05"],
+  "CANTHO_S_51":["05:05","05:25"],
+  "CANTHO_S_52":["05:05","05:25"],
+  "CANTHO_S_53":["05:05","05:25"],
+  "CANTHO_S_54":["05:05","05:25"],
+  "CANTHO_S_55":["05:05","05:25"],
+  "CANTHO_S_56":["05:05","07:30"],
+  "CANTHO_S_57":["05:05","05:25"],
+  "CANTHO_S_58":["05:05","05:25"],
+
+  // ===== CA TRUA =====
+  "CANTHO_T_1":["09:30","10:00"],
+  "CANTHO_T_2":["09:30","10:00"],
+  "CANTHO_T_3":["09:30","10:00"],
+  "CANTHO_T_4":["09:30","10:00"],
+  "CANTHO_T_5":["09:40","10:00"],
+  "CANTHO_T_7":["09:40","10:00"],
+  "CANTHO_T_8":["09:40","10:00"],
+  "CANTHO_T_9":["09:40","10:00"],
+  "CANTHO_T_10":["09:40","10:00"],
+  "CANTHO_T_11":["10:00","10:20"],
+  "CANTHO_T_12":["10:00","10:20"],
+  "CANTHO_T_13":["10:00","10:20"],
+  "CANTHO_T_14":["10:00","10:20"],
+  "CANTHO_T_15":["10:00","10:20"],
+  "CANTHO_T_16":["10:00","10:20"],
+  "CANTHO_T_17":["10:00","10:20"],
+  "CANTHO_T_18":["10:00","10:20"],
+  "CANTHO_T_19":["10:00","10:20"],
+  "CANTHO_T_20":["10:00","10:20"],
+  "CANTHO_T_21":["10:20","10:40"],
+  "CANTHO_T_22":["10:20","10:40"],
+  "CANTHO_T_23":["10:20","10:40"],
+  "CANTHO_T_24":["10:20","10:40"],
+  "CANTHO_T_25":["10:20","10:40"],
+  "CANTHO_T_26":["10:20","10:40"],
+  "CANTHO_T_27":["10:20","10:40"],
+  "CANTHO_T_28":["10:20","10:40"],
+  "CANTHO_T_29":["10:20","10:40"],
+  "CANTHO_T_30":["10:40","11:00"],
+  "CANTHO_T_31":["10:40","11:00"],
+  "CANTHO_T_32":["10:40","11:00"],
+  "CANTHO_T_33":["10:40","11:00"],
+  "CANTHO_T_34":["10:40","11:00"],
+  "CANTHO_T_35":["10:40","11:00"],
+  "CANTHO_T_36":["10:40","11:10"],
+  "CANTHO_T_37":["10:40","11:10"],
+  "CANTHO_T_38":["10:40","11:00"],
+  "CANTHO_CD":["10:40","11:00"],
+
+  // ===== CA CHIEU =====
+  "CANTHO_C_1":["15:30","16:00"],
+  "CANTHO_C_2":["15:30","16:00"],
+  "CANTHO_C_3":["15:40","16:00"],
+  "CANTHO_C_4":["15:40","16:00"],
+  "CANTHO_C_5":["15:40","16:00"],
+  "CANTHO_C_6":["15:40","16:00"],
+  "CANTHO_C_7":["15:40","16:00"],
+  "CANTHO_C_8":["15:40","16:00"],
+  "CANTHO_C_9":["15:40","16:00"],
+  "CANTHO_C_10":["15:40","16:00"],
+  "CANTHO_C_11":["16:00","16:20"],
+  "CANTHO_C_12":["16:00","16:20"],
+  "CANTHO_C_13":["16:00","16:20"],
+  "CANTHO_C_14":["16:00","16:20"],
+  "CANTHO_C_15":["16:00","16:20"],
+  "CANTHO_C_16":["16:00","16:20"],
+  "CANTHO_C_17":["16:00","16:20"],
+  "CANTHO_C_18":["16:00","16:20"],
+  "CANTHO_C_19":["16:00","16:20"],
+  "CANTHO_C_20":["16:00","16:20"],
+  "CANTHO_C_21":["16:00","16:20"],
+  "CANTHO_C_22":["16:20","16:40"],
+  "CANTHO_C_23":["16:20","16:40"],
+  "CANTHO_C_24":["16:20","16:40"],
+  "CANTHO_C_25":["16:40","17:00"],
+  "CANTHO_C_26":["16:40","17:00"],
+  "CANTHO_C_27":["16:40","17:00"],
+  "CANTHO_C_28":["16:40","17:00"],
+  "CANTHO_C_29":["18:00","18:20"]
+};
+
+const CA_LABEL = {S:"CA SÁNG", T:"CA TRƯA", C:"CA CHIỀU"};
+const WEEKDAY = ["CHỦ NHẬT","THỨ HAI","THỨ BA","THỨ TƯ","THỨ NĂM","THỨ SÁU","THỨ BẢY"];
+
+// ====== Bảng tra cứu tài xế nội bộ: tên rút gọn -> {tên đầy đủ, sđt} ======
+const NOI_BO_LOOKUP = {
+  "mạnh":   {full:"Phạm Nguyễn Minh Mạnh",   sdt:"0939133932"},
+  "dư":     {full:"Huỳnh Văn Dư",            sdt:"0868845462"},
+  "hoàng sơn": {full:"Nguyễn Dương Hoàng Sơn", sdt:"0939007840"},
+  "sơn":    {full:"Hà Thanh Sơn",            sdt:"0939831861"},
+  "đức":    {full:"Dương Văn Đức",           sdt:"0707695516"},
+  "thọ":    {full:"Phạm Lộc Thọ",            sdt:"0768770785"},
+  "hồng kha": {full:"Trương Hồng Kha",       sdt:"0988970730"},
+  "sang":   {full:"Châu Ngọc Sang",          sdt:"0834759678"},
+  "hận":    {full:"Nguyễn Thanh Trường Hận", sdt:"0777260684"},
+  "bằng":   {full:"Huỳnh Văn Bằng",          sdt:"0932091237"},
+  "nguyên": {full:"Nguyễn Ngọc Nguyên",      sdt:"0939865581"},
+  "khoa":   {full:"Lê Hữu Khoa",             sdt:"0937269799"},
+  "hoàng anh": {full:"Trần Hoàng Anh",       sdt:"0398450375"},
+  "hoàng kha": {full:"Lê Hoàng Kha",         sdt:"0706699912"},
+  "cường":  {full:"Nguyễn Thanh Cường",      sdt:"0794059295"},
+  "linh":   {full:"Nhan Bảo Linh",           sdt:"0942784734"},
+  "ân":     {full:"Nguyễn Hoàng Ân",         sdt:"0795824771"},
+  "ngọc":   {full:"Lê Duy Ngọc",             sdt:"0706940436"},
+  "huy":    {full:"Đỗ Hoàng Huy",            sdt:"0939908128"},
+  "nhân":   {full:"Nguyễn Thanh Nhân",       sdt:"0901029827"},
+  "hoàng":  {full:"Nguyễn Huy Hoàng",        sdt:"0769271949"}
+};
+
+// Set default date = today
+window.addEventListener("DOMContentLoaded", ()=>{
+  const today = new Date();
+  document.getElementById("ngayChon").value = today.toISOString().slice(0,10);
+  buildNoiBoForm();
+});
+
+function normName(name){
+  return (name||"").trim().toLowerCase().normalize("NFC");
+}
+const NOI_BO_SET = new Set(NOI_BO.map(normName));
+
+function isNoiBo(name){
+  return NOI_BO_SET.has(normName(name));
+}
+
+// chuẩn hóa mã tuyến -> tìm cutoff
+// CanTho_T1_05 -> CANTHO_T_5 ; CanTho_S_07 -> CANTHO_S_7 ; CanTho_C1_28 -> CANTHO_C_28
+// CanTho_GXT_S1_01 -> CANTHO_GXT_S_1 ; CanTho_CĐ / CanTho_C_Đ -> CANTHO_CD
+function lookupCutoff(maTuyen){
+  if(!maTuyen) return null;
+  let m = maTuyen.toUpperCase().trim();
+  m = m.replace(/[\s\-]/g,"_");
+  // CanTho_CĐ -> CANTHO_CD (chuẩn hóa mọi dạng viết của "Đ")
+  m = m.replace(/Đ/g,"D");
+
+  let parts = m.split("_");
+
+  // Trường hợp đặc biệt: CANTHO_C_D (từ CanTho_C_Đ) -> CANTHO_CD
+  if(parts.length===3 && parts[1]==="C" && parts[2]==="D"){
+    if(CUTOFF[`${parts[0]}_CD`]) return CUTOFF[`${parts[0]}_CD`];
+  }
+
+  if(parts.length < 3){
+    // CANTHO_CD (không có số)
+    if(CUTOFF[m]) return CUTOFF[m];
+    return null;
+  }
+
+  let vung = parts[0];
+
+  // Trường hợp 4 phần: VUNG_GXT_CA_SO (ví dụ CANTHO_GXT_S1_01)
+  if(parts.length >= 4){
+    let gxtPrefix = parts[1]; // "GXT"
+    let caRaw = parts[2];     // "S1"
+    let soRaw = parts.slice(3).join("_"); // "01"
+    let caClean = caRaw.replace(/^([A-Z]+)\d*$/,"$1");
+    let so = parseInt(soRaw,10);
+    let key = `${vung}_${gxtPrefix}_${caClean}_${isNaN(so)?soRaw:so}`;
+    if(CUTOFF[key]) return CUTOFF[key];
+  }
+
+  let caRaw = parts[1]; // e.g. T1, S, C1, GXT
+  let soRaw = parts.slice(2).join("_"); // e.g. 05, 08
+
+  // bỏ số dư trong caRaw (T1 -> T, S1 -> S, C1 -> C), giữ GXT
+  let caClean = caRaw.replace(/^([A-Z]+)\d*$/,"$1");
+  let so = parseInt(soRaw,10);
+  let key = `${vung}_${caClean}_${isNaN(so)?soRaw:so}`;
+  if(CUTOFF[key]) return CUTOFF[key];
+
+  // thử thêm prefix GXT giữ nguyên
+  key = `${vung}_${caRaw}_${isNaN(so)?soRaw:so}`;
+  if(CUTOFF[key]) return CUTOFF[key];
+
+  return null;
+}
+
+function clearAll(){
+  document.getElementById("dataInput").value = "";
+  buildNoiBoForm(); // resets the form fields (rebuild fresh)
+  document.getElementById("lichBody").innerHTML = "";
+  document.getElementById("lichTable").style.display="none";
+  document.getElementById("emptyState").style.display="block";
+  document.getElementById("lichTitle").textContent = "CHƯA CÓ DỮ LIỆU";
+  document.getElementById("statusBadge").innerHTML = "";
+}
+
+// Tên hiển thị rút gọn cho dropdown (theo bảng SĐT anh gửi), dùng key của NOI_BO_LOOKUP
+const NOI_BO_DISPLAY_ORDER = [
+  "mạnh","dư","hoàng sơn","sơn","đức","thọ","hồng kha","sang","hận","bằng",
+  "nguyên","khoa","hoàng anh","hoàng kha","cường","linh","ân","ngọc","huy","nhân","hoàng"
+];
+
+function buildNoiBoForm(){
+  const ca = document.getElementById("caChon").value;
+  const list = TUYEN_NOI_BO[ca] || [];
+  const tbody = document.getElementById("noiboFormBody");
+  tbody.innerHTML = "";
+
+  let optionsHtml = `<option value="">-- chọn tài xế --</option>`;
+  NOI_BO_DISPLAY_ORDER.forEach(key=>{
+    const info = NOI_BO_LOOKUP[key];
+    const label = info.full;
+    optionsHtml += `<option value="${key}">${label}</option>`;
+  });
+
+  const saved = loadNoiBoSaved(ca);
+
+  list.forEach((tuyen,idx)=>{
+    const tr = document.createElement("tr");
+    const savedRow = saved[tuyen] || {bks:"", tx:""};
+    tr.innerHTML = `
+      <td class="tuyen-label">${tuyen}</td>
+      <td><input type="text" id="nb_bks_${idx}" placeholder="VD: 50H-186.96" value="${savedRow.bks||""}"></td>
+      <td><select id="nb_tx_${idx}">${optionsHtml}</select></td>
+    `;
+    tbody.appendChild(tr);
+    const sel = tr.querySelector(`#nb_tx_${idx}`);
+    if(savedRow.tx) sel.value = savedRow.tx;
+
+    const bksInput = tr.querySelector(`#nb_bks_${idx}`);
+    bksInput.addEventListener("input", saveNoiBoForm);
+    sel.addEventListener("change", saveNoiBoForm);
+  });
+}
+
+const NOIBO_STORAGE_KEY = "ghn_noibo_form_v1";
+
+function loadNoiBoSaved(ca){
+  try{
+    const all = JSON.parse(localStorage.getItem(NOIBO_STORAGE_KEY) || "{}");
+    return all[ca] || {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveNoiBoForm(){
+  const ca = document.getElementById("caChon").value;
+  const list = TUYEN_NOI_BO[ca] || [];
+  const dataForCa = {};
+  list.forEach((tuyen,idx)=>{
+    const bksEl = document.getElementById(`nb_bks_${idx}`);
+    const txEl = document.getElementById(`nb_tx_${idx}`);
+    if(!bksEl || !txEl) return;
+    dataForCa[tuyen] = { bks: bksEl.value.trim(), tx: txEl.value };
+  });
+  try{
+    const all = JSON.parse(localStorage.getItem(NOIBO_STORAGE_KEY) || "{}");
+    all[ca] = dataForCa;
+    localStorage.setItem(NOIBO_STORAGE_KEY, JSON.stringify(all));
+  }catch(e){ /* ignore */ }
+}
+
+function resetNoiBoForm(){
+  const ca = document.getElementById("caChon").value;
+  if(!confirm("Xóa thông tin BKS/Tài xế đã nhớ cho ca này?")) return;
+  try{
+    const all = JSON.parse(localStorage.getItem(NOIBO_STORAGE_KEY) || "{}");
+    delete all[ca];
+    localStorage.setItem(NOIBO_STORAGE_KEY, JSON.stringify(all));
+  }catch(e){ /* ignore */ }
+  buildNoiBoForm();
+}
+
+function readNoiBoForm(){
+  const ca = document.getElementById("caChon").value;
+  const list = TUYEN_NOI_BO[ca] || [];
+  const result = [];
+  list.forEach((tuyen,idx)=>{
+    const bksEl = document.getElementById(`nb_bks_${idx}`);
+    const txEl = document.getElementById(`nb_tx_${idx}`);
+    if(!bksEl || !txEl) return;
+    const bks = bksEl.value.trim();
+    const key = txEl.value;
+    if(!bks && !key) return; // dòng trống -> bỏ qua
+
+    let tx = "", sdt = "";
+    if(key && NOI_BO_LOOKUP[key]){
+      tx = NOI_BO_LOOKUP[key].full;
+      sdt = NOI_BO_LOOKUP[key].sdt;
+    }
+    if(!bks && !tx) return;
+    result.push({tuyen, bks, tai:"1900", tx, sdt});
+  });
+  // Lưu lại để dùng cho lần sau
+  saveNoiBoForm();
+  return result;
+}
+
+// Sort key: tách prefix + số để sort tăng dần theo số (không phải theo chuỗi)
+// CanTho_S1_07 -> ["CANTHO_S1", 7] ; CanTho_CD -> ["CANTHO_CD", 0]
+function sortKey(tuyen){
+  let m = (tuyen||"").toUpperCase().trim().replace(/[\s\-]/g,"_").replace(/Đ/g,"D");
+  let match = m.match(/^(.*)_(\d+)$/);
+  if(match){
+    return [match[1], parseInt(match[2],10)];
+  }
+  return [m, 0];
+}
+
+function compareTuyen(a,b){
+  const [pa,na] = sortKey(a.tuyen);
+  const [pb,nb] = sortKey(b.tuyen);
+  if(pa !== pb) return pa < pb ? -1 : 1;
+  return na - nb;
+}
+
+function detectCols(headerCells){
+  // map tên cột chuẩn hóa -> index
+  const map = {};
+  headerCells.forEach((h,i)=>{
+    const t = (h||"").toLowerCase().trim();
+    if(/biển số|bks/.test(t)) map.bks = i;
+    else if(/trọng tải|tải trọng/.test(t)) map.tai = i;
+    else if(/tài xế|lái xe|thông tin lái/.test(t)) map.tx = i;
+    else if(/điện thoại|liên hệ|sđt/.test(t)) map.sdt = i;
+    else if(/mã tuyến|tên tuyến|tuyến/.test(t)) map.tuyen = i;
+    else if(/^stt$/.test(t)) map.stt = i;
+    else if(/ngày/.test(t)) map.ngay = i;
+  });
+  return map;
+}
+
+function parsePastedData(raw){
+  const lines = raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l.length>0);
+  if(lines.length===0) return [];
+  let rows = lines.map(l=>l.split("\t"));
+
+  // nếu chỉ 1 cột (paste lỗi), thử tách bằng nhiều space
+  if(rows[0].length===1){
+    rows = lines.map(l=>l.split(/\s{2,}/));
+  }
+
+  let colMap = detectCols(rows[0]);
+  let startIdx = 0;
+  // nếu header row được nhận diện có >=2 field, bỏ dòng header
+  if(Object.keys(colMap).length >= 2){
+    startIdx = 1;
+  } else {
+    // fallback: tự dò cấu trúc dựa theo dòng dữ liệu đầu tiên
+    // Kiểu 1 (có STT):  STT, NGAY, BKS, TAI, TX, SDT, TUYEN, ...
+    // Kiểu 2 (không STT): NGAY, BKS, TAI, TX, SDT, TUYEN, ...
+    const r0 = rows[0];
+    const isDate = (s)=> /^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test((s||"").trim());
+    const isPureNum = (s)=> /^\d+$/.test((s||"").trim());
+
+    if(isDate(r0[0])){
+      // không có STT, NGAY ở vị trí 0
+      colMap = {ngay:0, bks:1, tai:2, tx:3, sdt:4, tuyen:5};
+    } else if(isPureNum(r0[0]) && isDate(r0[1])){
+      // có STT ở vị trí 0
+      colMap = {stt:0, ngay:1, bks:2, tai:3, tx:4, sdt:5, tuyen:6};
+    } else {
+      // mặc định: có STT
+      colMap = {stt:0, ngay:1, bks:2, tai:3, tx:4, sdt:5, tuyen:6};
+    }
+  }
+
+  const result = [];
+  const TUYEN_RE = /^[A-Za-zÀ-ỹ]+_[A-Za-zÀ-ỹ0-9]+_[A-Za-zÀ-ỹ0-9]+$/; // ví dụ CanTho_C1_26, CaMau_S_08
+  for(let i=startIdx;i<rows.length;i++){
+    let r = rows[i].map(c=>c.trim());
+    if(r.length < 2) continue;
+
+    // tìm cột mã tuyến bằng pattern (đáng tin cậy nhất, không phụ thuộc vị trí cố định)
+    let tuyenIdx = -1;
+    for(let j=r.length-1;j>=0;j--){
+      if(TUYEN_RE.test(r[j])){ tuyenIdx = j; break; }
+    }
+    let tuyen, bks, tai, tx, sdt;
+    if(tuyenIdx >= 0){
+      tuyen = r[tuyenIdx];
+      // loại bỏ các ô rỗng xen giữa để các cột còn lại thẳng hàng
+      const rest = r.slice(0,tuyenIdx).filter(c=>c!=="");
+      // rest mong đợi: [NGAY, BKS, TAI, TX, SDT] (bỏ STT nếu có, vì STT là số thuần và ngay cũng vậy - ưu tiên cắt từ cuối)
+      // lấy 4 phần tử cuối của rest: BKS, TAI, TX, SDT
+      const n = rest.length;
+      bks = rest[n-4] || "";
+      tai = rest[n-3] || "";
+      tx  = rest[n-2] || "";
+      sdt = rest[n-1] || "";
+    } else {
+      tuyen = (r[colMap.tuyen]||"").trim();
+      if(!tuyen) continue;
+      bks = (r[colMap.bks]||"").trim();
+      tai = (r[colMap.tai]||"").trim();
+      tx = (r[colMap.tx]||"").trim();
+      sdt = (r[colMap.sdt]||"").trim();
+    }
+    if(!tuyen) continue;
+    if(!bks && !tx) continue;
+    result.push({tuyen, bks, tai, tx, sdt});
+  }
+  return result;
+}
+
+function formatPhone(sdt){
+  let s = (sdt||"").replace(/\s+/g,"").replace(/^0/,"0");
+  if(/^\d{10}$/.test(s)){
+    return s.replace(/(\d{4})(\d{3})(\d{3})/,"$1.$2.$3");
+  }
+  if(/^\d{9,11}$/.test(s)){
+    return s;
+  }
+  return sdt || "";
+}
+
+function formatTai(tai){
+  let t = (tai||"").toString().replace(/[.,\s]/g,"");
+  let n = parseInt(t,10);
+  if(isNaN(n)) return tai||"";
+  return n.toLocaleString("vi-VN");
+}
+
+function isFiveTon(tai){
+  let t = (tai||"").toString().replace(/[.,\s]/g,"");
+  let n = parseInt(t,10);
+  return n >= 5000;
+}
+
+function generateLich(){
+  const raw = document.getElementById("dataInput").value;
+  const ca = document.getElementById("caChon").value;
+  const ngayStr = document.getElementById("ngayChon").value;
+
+  const ncRows = parsePastedData(raw);
+  const nbRows = readNoiBoForm();
+
+  const tbody = document.getElementById("lichBody");
+  const table = document.getElementById("lichTable");
+  const empty = document.getElementById("emptyState");
+  const badge = document.getElementById("statusBadge");
+
+  if(ncRows.length===0 && nbRows.length===0){
+    alert("Không nhận diện được dữ liệu. Vui lòng kiểm tra lại dữ liệu dán vào (cần có cột Mã tuyến, Biển số xe, Tài xế).");
+    return;
+  }
+
+  // Ghép 2 nguồn, ưu tiên data nội bộ (mới hơn / nội bộ chính xác hơn) nếu cùng mã tuyến
+  const merged = {};
+  ncRows.forEach(r=>{ merged[normName(r.tuyen)] = r; });
+  nbRows.forEach(r=>{ merged[normName(r.tuyen)] = r; });
+  const rows = Object.values(merged).sort(compareTuyen);
+
+  // Title
+  let dateLabel = "";
+  if(ngayStr){
+    const d = new Date(ngayStr+"T00:00:00");
+    const dd = String(d.getDate()).padStart(2,"0");
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const yyyy = d.getFullYear();
+    dateLabel = `${dd}/${mm}/${yyyy} ( ${WEEKDAY[d.getDay()]} )`;
+  }
+  document.getElementById("lichTitle").innerHTML =
+    `THÔNG TIN LUÂN CHUYỂN - ${CA_LABEL[ca]}<br>${dateLabel}`;
+
+  tbody.innerHTML = "";
+  let noMatch = 0;
+
+  rows.forEach((row,idx)=>{
+    const tr = document.createElement("tr");
+    const noibo = isNoiBo(row.tx);
+    if(noibo) tr.classList.add("noibo");
+
+    const cutoffPair = lookupCutoff(row.tuyen);
+    if(!cutoffPair) noMatch++;
+    const cutoffText = cutoffPair ? `${cutoffPair[0]} - ${cutoffPair[1]}` : "?? - ??";
+
+    const taiFmt = formatTai(row.tai);
+    const fiveTon = isFiveTon(row.tai);
+
+    tr.innerHTML = `
+      <td class="tt ${fiveTon?'red':''}" contenteditable="true">${idx+1}</td>
+      <td class="tuyen" contenteditable="true">${row.tuyen}</td>
+      <td class="tai ${fiveTon?'red':''}" contenteditable="true" style="text-align:center;font-weight:bold;">${taiFmt}</td>
+      <td class="cutoff" contenteditable="true">${cutoffText}</td>
+      <td class="bks ${fiveTon?'red':''}" contenteditable="true">${row.bks}</td>
+      <td class="tx" contenteditable="true">${row.tx}${row.sdt ? " - "+formatPhone(row.sdt) : ""}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  empty.style.display = "none";
+  table.style.display = "table";
+
+  if(noMatch>0){
+    badge.innerHTML = `<span class="badge warn">⚠ ${noMatch} dòng chưa khớp giờ cutoff - vui lòng tự sửa</span>`;
+  }else{
+    badge.innerHTML = `<span class="badge ok">✓ ${rows.length} chuyến</span>`;
+  }
+}
+
+function exportImage(){
+  const node = document.getElementById("lichCard");
+  if(document.getElementById("lichTable").style.display === "none"){
+    alert("Chưa có lịch để xuất. Vui lòng tạo lịch trước.");
+    return;
+  }
+  html2canvas(node, {scale:2.5, backgroundColor:"#ffffff"}).then(canvas=>{
+    const link = document.createElement("a");
+    const ca = document.getElementById("caChon").value;
+    const ngayStr = document.getElementById("ngayChon").value || "lich";
+    link.download = `LuanChuyen_${CA_LABEL[ca].replace(/\s/g,"")}_${ngayStr}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
+</script>
+</body>
+</html>
